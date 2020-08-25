@@ -10,13 +10,11 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 /*!40101 SET NAMES utf8 */;
 
 CREATE TABLE IF NOT EXISTS `weatherFor2` (
-  `wID` int(5) unsigned zerofill NOT NULL auto_increment,
+  `cityName` varchar(10) collate utf8_unicode_ci NOT NULL,-----------還沒改好--------------
+  `townName` varchar(10) collate utf8_unicode_ci NOT NULL,-----------還沒改好--------------
   `startTime` DATETIME NOT NULL,
   `endTime` DATETIME NOT NULL,
-  `WeatherDescription` varchar(50) collate utf8_unicode_ci NOT NULL,
+  `WeatherDescription` varchar(254) collate utf8_unicode_ci NOT NULL,
 
-  PRIMARY KEY  (`wID`)
+  PRIMARY KEY  (`startTime`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
-
-INSERT INTO `weatherFor2` (`startTime`, `endTime`, `WeatherDescription`) VALUES
-('2020-08-25 06:00:00', '2020-08-25 09:00:00', '晴。降雨機率 20%。溫度攝氏27度。悶熱。偏南風 平均風速3-4級(每秒6公尺)。相對濕度87%。')
