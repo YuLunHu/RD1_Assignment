@@ -1,17 +1,22 @@
 <?php
-header("content-type:text/html; charset=utf-8");
 
-$AuthCode = "CWB-378522C1-C8C0-4B22-AD32-584BE424FDB3";
-$datastore = "F-C0032-001"; // 一般天氣預報-今明 36 小時天氣預報
-$locationName = "臺中市"; // 使用者決定
+$cityName = $_GET["city"]; // GET被選擇的城市
+echo $cityName; // echo出來才能塞回首頁的標籤內
 
-$uri = "https://opendata.cwb.gov.tw/api/v1/rest/datastore/" . $datastore .
-  "?Authorization=" . $AuthCode .
-  "&format=JSON" . 
-  "&locationName=". urlencode($locationName) . 
-  "&sort=time"; 
+// header("content-type:text/html; charset=utf-8");
 
-echo $uri;
+// $AuthCode = "CWB-378522C1-C8C0-4B22-AD32-584BE424FDB3";
+// $datastore = "F-C0032-001"; // 一般天氣預報-今明 36 小時天氣預報
+// $locationName = "臺中市"; // 使用者決定
+
+// $uri = "https://opendata.cwb.gov.tw/api/v1/rest/datastore/" . $datastore .
+//   "?Authorization=" . $AuthCode .
+//   "&format=JSON" . 
+//   "&locationName=". urlencode($locationName) . 
+//   "&sort=time"; 
+
+// echo $uri;
+
 // // 打api抓氣象資料
 // $json = file_get_contents($uri);
 // $obj = json_decode($json);

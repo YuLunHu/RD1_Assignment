@@ -1,3 +1,12 @@
+<?php
+// if (isset(selectCity=臺中市&submit=1))
+// require_once('realTimeWeather.php');
+// require_once('weatherfor2.php');
+// echo $startTime;
+// echo urlencode("臺中市");
+?>
+</body>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,40 +24,33 @@
   <form>
     <div class="form-group row">
       <label class="col-4 col-form-label" for="selectCity">縣市:</label>
-      <select id="selectCity" name="selectCity" class="col-2 custom-select">
+      <select id="selectCity" name="selectCity" class="col-2 custom-select" onchange="selectedCity(this.value)">
         <option value="臺中市">臺中市</option>
         <option value="臺南市">臺南市</option>
         <option value="臺北市">臺北市</option>
       </select>
-      <button name="submit" type="submit" class="btn btn-primary" value="1">Submit</button>
+      <button name="submit" type="submit" class="btn btn-primary" value="OK">Submit</button>
     </div>
   </form>
 
-  <div id="selectedLocation"></div>
-  <div id="resultTable"></div>
+  <div id="queryResult"><b>Person info will be listed here...</b></div>
 
   <script>
+    function selectedCity(city) {
+      // var x = document.getElementById("selectCity").value;
+      // document.getElementById("queryResult").innerHTML = "You selected: " + x;
 
-// onchange
-//     $(document).ready(function () {
-//       $("#selectCity").on('click', function () {
-//         for (var i = 0, len = sel.options.length; i < len; i++) {
-//           opt = sel.options[i];
-//           if (opt.selected === true) {
-//             break;
-//           }
-//         }
-//       })
-//     })
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        document.getElementById("queryResult").innerHTML = this.responseText;
+      }
+    };
+    xmlhttp.open("GET","realTimeWeather.php?city=" + city, true);
+    xmlhttp.send();
+
+    }
+
   </script>
-
-<?php
-// if (isset(selectCity=臺中市&submit=1))
-require_once('realTimeWeather.php');
-// require_once('weatherfor2.php');
-// echo $startTime;
-// echo urlencode("臺中市");
-?>
-</body>
 
 </html>
