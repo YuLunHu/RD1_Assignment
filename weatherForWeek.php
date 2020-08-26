@@ -37,4 +37,3 @@ for ($i = 0; $i < count($weatherElement); $i++) {
 }
 mysqli_close($link);
 ?>
-</body>
