@@ -1,43 +1,72 @@
 <?php
+header("content-type:text/html; charset=utf-8");
 
 $cityName = $_GET["city"]; // GET被選擇的城市
-echo $cityName; // echo出來才能塞回首頁的標籤內
+// echo $cityName; // echo出來才能塞回首頁的標籤內
 
-// header("content-type:text/html; charset=utf-8");
+$AuthCode = "CWB-378522C1-C8C0-4B22-AD32-584BE424FDB3";
+$datastore = "F-C0032-001"; // 一般天氣預報-今明 36 小時天氣預報
 
-// $AuthCode = "CWB-378522C1-C8C0-4B22-AD32-584BE424FDB3";
-// $datastore = "F-C0032-001"; // 一般天氣預報-今明 36 小時天氣預報
-// $locationName = "臺中市"; // 使用者決定
+$uri = "https://opendata.cwb.gov.tw/api/v1/rest/datastore/" . $datastore .
+  "?Authorization=" . $AuthCode .
+  "&format=JSON" . 
+  "&locationName=". urlencode($cityName) . 
+  "&sort=time"; 
 
-// $uri = "https://opendata.cwb.gov.tw/api/v1/rest/datastore/" . $datastore .
-//   "?Authorization=" . $AuthCode .
-//   "&format=JSON" . 
-//   "&locationName=". urlencode($locationName) . 
-//   "&sort=time"; 
+// 打api抓氣象資料
+$json = file_get_contents($uri);
+$obj = json_decode($json);
 
-// echo $uri;
+$weatherElement = $obj->records->location[0]->weatherElement; //擷取需要使用的資料就好
+unset($json, $obj);
 
-// // 打api抓氣象資料
-// $json = file_get_contents($uri);
-// $obj = json_decode($json);
-// $weatherElement = $obj->records->locations[0]->location[0]->weatherElement; //擷取需要使用的資料就好
+$Wx = array();
+$PoP = array();
+$MinT = array();
+$MaxT = array();
+$CI = array();
+$startTime = array();
+$endTime = array();
 
-// // 啟動與mysql連結
-// $link = @mysqli_connect("localhost", "root", "root", null, 8889) or die(mysqli_connect_error()); // 若是XAMPP就沒有密碼
-// mysqli_query($link, "set names utf8");
-// mysqli_select_db($link, "weatherDB");
-// $sqlCommand = "";
+// 將資料存放到各個陣列
+for ($i = 0; $i < count($weatherElement); $i++) {
+    $elementName = $weatherElement[$i]->elementName;
+    for ($j = 0; $j < count($weatherElement[$i]->time); $j++) {
+        if (count($startTime) != count($weatherElement[$i]->time)) { // 判斷時間已達到足夠的量
+            array_push($startTime, $weatherElement[$i]->time[$j]->startTime);
+            array_push($endTime, $weatherElement[$i]->time[$j]->endTime);
+        }
+        $parameterName = $weatherElement[$i]->time[$j]->parameter->parameterName;
+        switch ($elementName) {
+            case "Wx":
+                array_push($Wx, $parameterName);
+                break;
+            case "PoP":
+                array_push($PoP, $parameterName);
+                break;
+            case "MinT":
+                array_push($MinT, $parameterName);
+                break;
+            case "MaxT":
+                array_push($MaxT, $parameterName);
+                break;
+            case "CI":
+                array_push($CI, $parameterName);
+                break;
+        }
+    }
+}
 
-// // 存資料到DB
-// for ($i = 0; $i < count($weatherElement[0]->time); $i++) {
-//   for ($j = 0; $j < count($weatherElement[0]->time[$i]->elementValue); $j++) {
-//     $weatherDescription = $weatherElement[0]->time[$i]->elementValue[$j]->value;
-//     $startTime = $weatherElement[0]->time[$i]->startTime;
-//     $endTime = $weatherElement[0]->time[$i]->endTime;
-//     $sqlCommand = "INSERT INTO `weatherFor2` (`startTime`, `endTime`, `WeatherDescription`) VALUES ('$startTime', '$endTime', '$weatherDescription')";
-//     mysqli_query($link, $sqlCommand);
-//   }
-// }
-// mysqli_close($link);
+// 啟動與mysql連結
+$link = @mysqli_connect("localhost", "root", "root", null, 8889) or die(mysqli_connect_error()); // 若是XAMPP就沒有密碼
+mysqli_query($link, "set names utf8");
+mysqli_select_db($link, "weatherDB");
+$sqlCommand = "";
 
+// 存進DB
+for ($i = 0; $i < count($startTime); $i++) {
+    $sqlCommand = "INSERT INTO `realTimeWeather` (`cityName`, `startTime`, `endTime`, `Wx`, `PoP`, `MinT`, `MaxT`, `CI`) VALUES ('$cityName', '$startTime[$i]', '$endTime[$i]', '$Wx[$i]', '$PoP[$i]', '$MinT[$i]', '$MaxT[$i]', '$CI[$i]')";
+    mysqli_query($link, $sqlCommand);
+}
+mysqli_close($link);
 ?>

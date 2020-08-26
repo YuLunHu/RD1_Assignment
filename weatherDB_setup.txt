@@ -9,12 +9,33 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8 */;
 
-CREATE TABLE IF NOT EXISTS `weatherFor2` (
-  `cityName` varchar(10) collate utf8_unicode_ci NOT NULL,-----------還沒改好--------------
-  `townName` varchar(10) collate utf8_unicode_ci NOT NULL,-----------還沒改好--------------
+CREATE TABLE IF NOT EXISTS `realTimeWeather` (
+  `cityName` varchar(10) collate utf8_unicode_ci NOT NULL,
   `startTime` DATETIME NOT NULL,
   `endTime` DATETIME NOT NULL,
-  `WeatherDescription` varchar(254) collate utf8_unicode_ci NOT NULL,
+  `Wx` varchar(30) collate utf8_unicode_ci NOT NULL,
+  `PoP` varchar(10) collate utf8_unicode_ci NOT NULL,
+  `MinT` varchar(10) collate utf8_unicode_ci NOT NULL,
+  `MaxT` varchar(10) collate utf8_unicode_ci NOT NULL,
+  `CI` varchar(20) collate utf8_unicode_ci NOT NULL,
 
-  PRIMARY KEY  (`startTime`)
+  PRIMARY KEY  (`cityName`, `startTime`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `weatherFor2` (
+  `cityName` varchar(10) collate utf8_unicode_ci NOT NULL,
+  `startTime` DATETIME NOT NULL,
+  `endTime` DATETIME NOT NULL,
+  `weatherDescription` varchar(254) collate utf8_unicode_ci NOT NULL,
+
+  PRIMARY KEY  (`cityName`, `startTime`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `weatherForWeek` (
+  `cityName` varchar(10) collate utf8_unicode_ci NOT NULL,
+  `startTime` DATETIME NOT NULL,
+  `endTime` DATETIME NOT NULL,
+  `weatherDescription` varchar(254) collate utf8_unicode_ci NOT NULL,
+
+  PRIMARY KEY  (`cityName`, `startTime`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;

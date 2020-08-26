@@ -4,7 +4,7 @@ header("content-type:text/html; charset=utf-8");
 $cityName = $_GET["city"]; // GET被選擇的城市
 
 $AuthCode = "CWB-378522C1-C8C0-4B22-AD32-584BE424FDB3";
-$datastore = "F-D0047-089"; // 台灣各城市未來２天
+$datastore = "F-D0047-091"; // 台灣各城市未來一週
 
 $uri = "https://opendata.cwb.gov.tw/api/v1/rest/datastore/" . $datastore .
   "?Authorization=" . $AuthCode .
@@ -31,7 +31,7 @@ for ($i = 0; $i < count($weatherElement); $i++) {
     $endTime = $weatherElement[$i]->endTime;
     $weatherDescription = $weatherElement[$i]->elementValue[0]->value;
 
-    $sqlCommand = "INSERT INTO `weatherFor2` (`cityName`, `startTime`, `endTime`, `weatherDescription`) VALUES ('$cityName', '$startTime', '$endTime', '$weatherDescription')";
+    $sqlCommand = "INSERT INTO `weatherForWeek` (`cityName`, `startTime`, `endTime`, `weatherDescription`) VALUES ('$cityName', '$startTime', '$endTime', '$weatherDescription')";
     mysqli_query($link, $sqlCommand);
   
 }
