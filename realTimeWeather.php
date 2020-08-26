@@ -2,7 +2,6 @@
 header("content-type:text/html; charset=utf-8");
 
 $cityName = $_GET["city"]; // GET被選擇的城市
-// echo $cityName; // echo出來才能塞回首頁的標籤內
 
 $AuthCode = "CWB-378522C1-C8C0-4B22-AD32-584BE424FDB3";
 $datastore = "F-C0032-001"; // 一般天氣預報-今明 36 小時天氣預報
@@ -19,8 +18,6 @@ $obj = json_decode($json);
 
 $weatherElement = $obj->records->location[0]->weatherElement; //擷取需要使用的資料就好
 unset($json, $obj);
-
-echo $weatherElement; //test
 
 // $Wx = array();
 // $PoP = array();
@@ -59,16 +56,16 @@ echo $weatherElement; //test
 //     }
 // }
 
-// 啟動與mysql連結
-$link = @mysqli_connect("localhost", "root", "root", null, 8889) or die(mysqli_connect_error()); // 若是XAMPP就沒有密碼
-mysqli_query($link, "set names utf8");
-mysqli_select_db($link, "weatherDB");
-$sqlCommand = "";
+// // 啟動與mysql連結
+// $link = @mysqli_connect("localhost", "root", "root", null, 8889) or die(mysqli_connect_error()); // 若是XAMPP就沒有密碼
+// mysqli_query($link, "set names utf8");
+// mysqli_select_db($link, "weatherDB");
+// $sqlCommand = "";
 
-// 存進DB
-for ($i = 0; $i < count($startTime); $i++) {
-    $sqlCommand = "INSERT INTO `realTimeWeather` (`cityName`, `startTime`, `endTime`, `Wx`, `PoP`, `MinT`, `MaxT`, `CI`) VALUES ('$cityName', '$startTime[$i]', '$endTime[$i]', '$Wx[$i]', '$PoP[$i]', '$MinT[$i]', '$MaxT[$i]', '$CI[$i]')";
-    mysqli_query($link, $sqlCommand);
-}
-mysqli_close($link);
+// // 存進DB
+// for ($i = 0; $i < count($startTime); $i++) {
+//     $sqlCommand = "INSERT INTO `realTimeWeather` (`cityName`, `startTime`, `endTime`, `Wx`, `PoP`, `MinT`, `MaxT`, `CI`) VALUES ('$cityName', '$startTime[$i]', '$endTime[$i]', '$Wx[$i]', '$PoP[$i]', '$MinT[$i]', '$MaxT[$i]', '$CI[$i]')";
+//     mysqli_query($link, $sqlCommand);
+// }
+// mysqli_close($link);
 ?>

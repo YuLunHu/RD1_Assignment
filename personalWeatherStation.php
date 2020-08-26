@@ -1,3 +1,7 @@
+<?php
+// require_once('realTimeWeather.php');
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -58,10 +62,10 @@
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function () {
           if (this.readyState == 4 && this.status == 200) {
-            document.getElementById("queryResult").innerHTML = this.responseText;
+            var x = document.getElementById("queryResult").innerHTML = this.responseText;
+            console.log(x); // <-------現在到這裡
           }
         };
-
         xmlhttp.open("GET", $("#selectData").val() + ".php?city=" + $("#selectCity").val(), true);
         xmlhttp.send();
       }
