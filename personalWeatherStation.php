@@ -4,7 +4,7 @@ session_start();
 // $datetime = date("Y-m-d H:i:s", mktime(date('H')+8, date('i'), date('s'), date('m'), date('d'), date('Y')));
 // echo $datetime; // 看時間
 
-if (isset($_POST["OKbtn"]))
+if (isset($_POST["OKbtn"])) // 按下按鈕後去要資料
 {
   if ($_POST["selectCity"] != "" && $_POST["selectData"] != "")
   {
@@ -14,6 +14,7 @@ if (isset($_POST["OKbtn"]))
     require($_POST["selectData"] . ".php");
   }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -30,8 +31,11 @@ if (isset($_POST["OKbtn"]))
 </head>
 
 <body>
-
   <form method="POST" action="personalWeatherStation.php">
+    <!-- 經緯度 -->
+    <div style="text-align:center">
+      　<div id="LatLong" name="LatLong" style="margin:0 auto; width:150px;"></div>
+    </div>
     <div class="form-group row">
       <label class="col-4 col-form-label" for="selectCity">縣市:</label>
       <select id="selectCity" name="selectCity" class="col-2 custom-select">
@@ -44,6 +48,11 @@ if (isset($_POST["OKbtn"]))
     </div>
   </form>
 
+<div class="landscape" style= "margin:15px">
+  <img src="images/<?= $_POST["selectCity"] ?>.jpg" width="200" style="display:block; margin:auto;">
+</div>
+  
+
   <div id="queryTable">
     <table class="table table-striped version_5 href-tr" id="sortTable">
       <thead>
@@ -51,6 +60,7 @@ if (isset($_POST["OKbtn"]))
           <?php switch ($_POST["selectData"]) {
 
             case "realTimeWeather": ?>
+          <!-- 當前天氣狀況 -->
           <th scope="col" id="cityName" class="height-100">縣市</th>
           <th scope="col" id="startTime">開始時間</th>
           <th scope="col" id="endTime">結束時間</th>
@@ -76,6 +86,7 @@ if (isset($_POST["OKbtn"]))
         <?php } break; ?>
 
         <?php case "weatherFor2": ?>
+        <!-- 未來兩天天氣預報 -->
         <th scope="col" id="cityName" class="height-100">縣市</th>
         <th scope="col" id="startTime">開始時間</th>
         <th scope="col" id="endTime">結束時間</th>
@@ -93,6 +104,7 @@ if (isset($_POST["OKbtn"]))
         <?php } break; ?>
 
         <?php case "weatherForWeek": ?>
+        <!-- 未來一週天氣預報 -->
         <th scope="col" id="cityName" class="height-100">縣市</th>
         <th scope="col" id="startTime">開始時間</th>
         <th scope="col" id="endTime">結束時間</th>
@@ -110,6 +122,7 @@ if (isset($_POST["OKbtn"]))
         <?php } break; ?>
 
         <?php case "rainfall": ?>
+        <!-- 雨量資料 -->
         <th scope="col" id="locationyName" class="height-100">測站名稱</th>
         <th scope="col" id="cityName">縣市</th>
         <th scope="col" id="town">鄉鎮市區</th>
@@ -121,6 +134,7 @@ if (isset($_POST["OKbtn"]))
       <tbody id="queryResult">
         <?php for ($i = 0; $i < count($rainfall); $i++) {
           if ($rainfall[$i]->parameter[0]->parameterValue == $_SESSION['selectCity'] ) { ?>
+        <!-- ^過濾縣市資料 -->
         <tr>
           <th scope="col" id="locationyName" class="height-100"><?=$locationName = $rainfall[$i]->locationName?></th>
           <th scope="col" id="cityName"><?=$rainfall[$i]->parameter[0]->parameterValue?></th>
@@ -130,11 +144,18 @@ if (isset($_POST["OKbtn"]))
           if ($rainfall[$i]->weatherElement[0]->elementValue < 0) {
             echo "該時刻因故無資料";
           } elseif ($rainfall[$i]->weatherElement[0]->elementValue == -998.00) {
-            echo "過去6小時累積雨量皆為0";
+            echo "過去6小時累積雨量為0";
           } else {
             echo $rainfall[$i]->weatherElement[0]->elementValue;
           }?></th>
-          <th scope="col" id="hour_24"><?=$rainfall[$i]->weatherElement[1]->elementValue?></th>
+          <th scope="col" id="hour_24"><?php 
+          if ($rainfall[$i]->weatherElement[1]->elementValue < 0) {
+            echo "該時刻因故無資料";
+          } elseif ($rainfall[$i]->weatherElement[1]->elementValue == -998.00) {
+            echo "過去6小時累積雨量為0";
+          } else {
+            echo $rainfall[$i]->weatherElement[1]->elementValue;
+          }?></th>
         </tr>
         <?php }?>
         <?php } break; ?>
@@ -144,12 +165,8 @@ if (isset($_POST["OKbtn"]))
     </table>
   </div>
 
-  <p id="demo">Click the button to get your position.</p>
-  <button onclick="getLocation()">Try It</button>
-  <div id="LongLat"></div>
-
   <script>
-    // 建立選單選項
+    // 建立下拉式選單的選項
     const cityName = { 宜蘭縣: "宜蘭縣", 花蓮縣: "花蓮縣", 臺東縣: "臺東縣", 澎湖縣: "澎湖縣", 金門縣: "金門縣", 連江縣: "連江縣", 臺北市: "臺北市", 新北市: "新北市", 桃園市: "桃園市", 臺中市: "臺中市", 臺南市: "臺南市", 高雄市: "高雄市", 基隆市: "基隆市", 新竹縣: "新竹縣", 新竹市: "新竹市", 苗栗縣: "苗栗縣", 彰化縣: "彰化縣", 南投縣: "南投縣", 雲林縣: "雲林縣", 嘉義縣: "嘉義縣", 嘉義市: "嘉義市", 屏東縣: "屏東縣" };
     for (var key in cityName) {
       addOption("selectCity", key, cityName[key]);
@@ -166,44 +183,23 @@ if (isset($_POST["OKbtn"]))
       objOption = null;
       obj = null;
     }
-//  ------------以下為用type="button"的onclick-----------
-
-    // function Query() {
-    //   if ($("#selectCity").val() != "" && $("#selectData").val() != "") {
-    //     console.log("OK");
-
-    //     var xmlhttp = new XMLHttpRequest();
-    //     xmlhttp.onreadystatechange = function () {
-    //       if (this.readyState == 4 && this.status == 200) {
-    //         var x = document.getElementById("queryResult").innerHTML = this.responseText;
-    //         console.log(x); // <-------現在到這裡
-    //       }
-    //     };
-    //     xmlhttp.open("GET", $("#selectData").val() + ".php?city=" + $("#selectCity").val(), true);
-    //     xmlhttp.send();
-    //   }
-    //   else {
-    //     console.log("NO");
-    //   }
-    // }
-
   </script>
 
   <!-- 抓經緯度 -->
   <script>
-    var x = document.getElementById("demo");
+    getLocation();
 
     function getLocation() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition, showError);
       } else {
-        x.innerHTML = "Geolocation is not supported by this browser.";
+        alert("您的瀏覽器不支援地理資訊");
       }
     }
 
     function showPosition(position) {
       var latlon = position.coords.latitude + "," + position.coords.longitude;
-      document.getElementById("LongLat").innerHTML = latlon;
+      document.getElementById("LatLong").innerHTML = latlon;
     }
 
     function showError(error) {
