@@ -31,7 +31,7 @@ if (isset($_POST["OKbtn"])) // 按下按鈕後去要資料
 </head>
 
 <body>
-  <form method="POST" action="personalWeatherStation.php">
+  <form method="POST">
     <!-- 經緯度 -->
     <div style="text-align:center">
       　<div id="LatLong" name="LatLong" style="margin:0 auto; width:150px;"></div>
