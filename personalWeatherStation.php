@@ -48,11 +48,12 @@ if (isset($_POST["OKbtn"])) // 按下按鈕後去要資料
     </div>
   </form>
 
-<div class="landscape" style= "margin:15px">
-  <img src="images/<?= $_POST["selectCity"] ?>.jpg" width="200" style="display:block; margin:auto;">
+<div class="landscape" style="margin:15px">
+  <img id="cityImage" <?php if ($_POST["selectCity"] != "") {
+    echo "src=images/" . $_POST["selectCity"] . ".jpg";
+  } ?> width="200" style="display:block; margin:auto;">
 </div>
   
-
   <div id="queryTable">
     <table class="table table-striped version_5 href-tr" id="sortTable">
       <thead>
@@ -183,6 +184,12 @@ if (isset($_POST["OKbtn"])) // 按下按鈕後去要資料
       objOption = null;
       obj = null;
     }
+
+    $("#selectCity").change(function() {
+      var cityImagePath = "images/" + $("#selectCity").val() + ".jpg";
+      $("#cityImage").attr("src", cityImagePath);
+      $("#cityImage").css('visibility','visible');
+    });
   </script>
 
   <!-- 抓經緯度 -->
