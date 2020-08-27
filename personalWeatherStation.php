@@ -1,5 +1,19 @@
 <?php
-// require_once('realTimeWeather.php');
+session_start();
+
+// $datetime = date("Y-m-d H:i:s", mktime(date('H')+8, date('i'), date('s'), date('m'), date('d'), date('Y')));
+// echo $datetime; // 看時間
+
+if (isset($_POST["OKbtn"]))
+{
+  if ($_POST["selectCity"] != "" && $_POST["selectData"] != "")
+  {
+    $_SESSION['selectCity'] = $_POST["selectCity"];
+    $_SESSION['selectData'] = $_POST["selectData"];
+
+    require($_POST["selectData"] . ".php");
+  }
+}
 ?>
 
 <!DOCTYPE html>
@@ -17,7 +31,7 @@
 
 <body>
 
-  <form>
+  <form method="POST" action="personalWeatherStation.php">
     <div class="form-group row">
       <label class="col-4 col-form-label" for="selectCity">縣市:</label>
       <select id="selectCity" name="selectCity" class="col-2 custom-select">
@@ -26,11 +40,109 @@
       <select id="selectData" name="selectData" class="col-2 custom-select">
         <option value="">--</option>
       </select>
-      <button id="OKbtn" name="OKbtn" type="button" class="btn btn-primary" value="OK" onclick="Query()">OK</button>
+      <button id="OKbtn" name="OKbtn" type="submit" class="btn btn-primary" value="OK">OK</button>
     </div>
   </form>
 
-  <div id="queryResult"><b>Query Result be here...</b></div>
+  <div id="queryTable">
+    <table class="table table-striped version_5 href-tr" id="sortTable">
+      <thead>
+        <tr>
+          <?php switch ($_POST["selectData"]) {
+
+            case "realTimeWeather": ?>
+          <th scope="col" id="cityName" class="height-100">縣市</th>
+          <th scope="col" id="startTime">開始時間</th>
+          <th scope="col" id="endTime">結束時間</th>
+          <th scope="col" id="Wx">天氣現象</th>
+          <th scope="col" id="MaxT">最高溫度</th>
+          <th scope="col" id="MinT">最低溫度</th>
+          <th scope="col" id="CI">舒適度</th>
+          <th scope="col" id="PoP">降雨機率</th>
+        </tr>
+      </thead>
+      <tbody id="queryResult">
+        <?php for ($i = 0; $i < count($startTime); $i++) { ?>
+        <tr>
+          <th scope="col" id="cityName" class="height-100"><?=$cityName?></th>
+          <th scope="col" id="startTime"><?=$startTime[$i]?></th>
+          <th scope="col" id="endTime"><?=$endTime[$i]?></th>
+          <th scope="col" id="Wx"><?=$Wx[$i]?></th>
+          <th scope="col" id="MaxT"><?=$MaxT[$i]?></th>
+          <th scope="col" id="MinT"><?=$MinT[$i]?></th>
+          <th scope="col" id="CI"><?=$CI[$i]?></th>
+          <th scope="col" id="PoP"><?=$PoP[$i]?></th>
+        </tr>
+        <?php } break; ?>
+
+        <?php case "weatherFor2": ?>
+        <th scope="col" id="cityName" class="height-100">縣市</th>
+        <th scope="col" id="startTime">開始時間</th>
+        <th scope="col" id="endTime">結束時間</th>
+        <th scope="col" id="weatherDescription">天氣描述</th>
+        </tr>
+        </thead>
+      <tbody id="queryResult">
+        <?php for ($i = 0; $i < count($weatherElement); $i++) { ?>
+        <tr>
+          <th scope="col" id="cityName" class="height-100"><?=$cityName?></th>
+          <th scope="col" id="startTime"><?=$weatherElement[$i]->startTime?></th>
+          <th scope="col" id="endTime"><?=$weatherElement[$i]->endTime?></th>
+          <th scope="col" id="weatherDescription"><?=$weatherElement[$i]->elementValue[0]->value?></th>
+        </tr>
+        <?php } break; ?>
+
+        <?php case "weatherForWeek": ?>
+        <th scope="col" id="cityName" class="height-100">縣市</th>
+        <th scope="col" id="startTime">開始時間</th>
+        <th scope="col" id="endTime">結束時間</th>
+        <th scope="col" id="weatherDescription">天氣描述</th>
+        </tr>
+        </thead>
+      <tbody id="queryResult">
+        <?php for ($i = 0; $i < count($weatherElement); $i++) { ?>
+        <tr>
+          <th scope="col" id="cityName" class="height-100"><?=$cityName?></th>
+          <th scope="col" id="startTime"><?=$weatherElement[$i]->startTime?></th>
+          <th scope="col" id="endTime"><?=$weatherElement[$i]->endTime?></th>
+          <th scope="col" id="weatherDescription"><?=$weatherElement[$i]->elementValue[0]->value?></th>
+        </tr>
+        <?php } break; ?>
+
+        <?php case "rainfall": ?>
+        <th scope="col" id="locationyName" class="height-100">測站名稱</th>
+        <th scope="col" id="cityName">縣市</th>
+        <th scope="col" id="town">鄉鎮市區</th>
+        <th scope="col" id="obsTime">測量時間</th>
+        <th scope="col" id="hour_1">過去1小時累積雨量(毫米)</th>
+        <th scope="col" id="hour_24">過去24小時累積雨量(毫米)</th>
+        </tr>
+        </thead>
+      <tbody id="queryResult">
+        <?php for ($i = 0; $i < count($rainfall); $i++) {
+          if ($rainfall[$i]->parameter[0]->parameterValue == $_SESSION['selectCity'] ) { ?>
+        <tr>
+          <th scope="col" id="locationyName" class="height-100"><?=$locationName = $rainfall[$i]->locationName?></th>
+          <th scope="col" id="cityName"><?=$rainfall[$i]->parameter[0]->parameterValue?></th>
+          <th scope="col" id="town"><?=$rainfall[$i]->parameter[1]->parameterValue?></th>
+          <th scope="col" id="obsTime"><?=$rainfall[$i]->time->obsTime?></th>
+          <th scope="col" id="hour_1"><?php 
+          if ($rainfall[$i]->weatherElement[0]->elementValue < 0) {
+            echo "該時刻因故無資料";
+          } elseif ($rainfall[$i]->weatherElement[0]->elementValue == -998.00) {
+            echo "過去6小時累積雨量皆為0";
+          } else {
+            echo $rainfall[$i]->weatherElement[0]->elementValue;
+          }?></th>
+          <th scope="col" id="hour_24"><?=$rainfall[$i]->weatherElement[1]->elementValue?></th>
+        </tr>
+        <?php }?>
+        <?php } break; ?>
+
+        <?php } ?>
+      </tbody>
+    </table>
+  </div>
 
   <p id="demo">Click the button to get your position.</p>
   <button onclick="getLocation()">Try It</button>
@@ -54,25 +166,26 @@
       objOption = null;
       obj = null;
     }
+//  ------------以下為用type="button"的onclick-----------
 
-    function Query() {
-      if ($("#selectCity").val() != "" && $("#selectData").val() != "") {
-        console.log("OK");
+    // function Query() {
+    //   if ($("#selectCity").val() != "" && $("#selectData").val() != "") {
+    //     console.log("OK");
 
-        var xmlhttp = new XMLHttpRequest();
-        xmlhttp.onreadystatechange = function () {
-          if (this.readyState == 4 && this.status == 200) {
-            var x = document.getElementById("queryResult").innerHTML = this.responseText;
-            console.log(x); // <-------現在到這裡
-          }
-        };
-        xmlhttp.open("GET", $("#selectData").val() + ".php?city=" + $("#selectCity").val(), true);
-        xmlhttp.send();
-      }
-      else {
-        console.log("NO");
-      }
-    }
+    //     var xmlhttp = new XMLHttpRequest();
+    //     xmlhttp.onreadystatechange = function () {
+    //       if (this.readyState == 4 && this.status == 200) {
+    //         var x = document.getElementById("queryResult").innerHTML = this.responseText;
+    //         console.log(x); // <-------現在到這裡
+    //       }
+    //     };
+    //     xmlhttp.open("GET", $("#selectData").val() + ".php?city=" + $("#selectCity").val(), true);
+    //     xmlhttp.send();
+    //   }
+    //   else {
+    //     console.log("NO");
+    //   }
+    // }
 
   </script>
 

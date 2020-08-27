@@ -1,7 +1,8 @@
 <?php
 header("content-type:text/html; charset=utf-8");
+session_start();
 
-$cityName = $_GET["city"]; // GET被選擇的城市
+$cityName = $_SESSION['selectCity'];
 
 $AuthCode = "CWB-378522C1-C8C0-4B22-AD32-584BE424FDB3";
 $datastore = "F-D0047-089"; // 台灣各城市未來２天
@@ -33,7 +34,6 @@ for ($i = 0; $i < count($weatherElement); $i++) {
 
     $sqlCommand = "INSERT INTO `weatherFor2` (`cityName`, `startTime`, `endTime`, `weatherDescription`) VALUES ('$cityName', '$startTime', '$endTime', '$weatherDescription')";
     mysqli_query($link, $sqlCommand);
-  
 }
 mysqli_close($link);
 ?>

@@ -1,7 +1,8 @@
 <?php
 header("content-type:text/html; charset=utf-8");
+session_start();
 
-$cityName = $_GET["city"]; // GET被選擇的城市
+$cityName = $_SESSION['selectCity'];
 
 $AuthCode = "CWB-378522C1-C8C0-4B22-AD32-584BE424FDB3";
 $datastore = "F-D0047-091"; // 台灣各城市未來一週

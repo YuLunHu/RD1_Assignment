@@ -1,8 +1,6 @@
 <?php
 header("content-type:text/html; charset=utf-8");
 
-$cityName = $_GET["city"]; // GET被選擇的城市
-
 $AuthCode = "CWB-378522C1-C8C0-4B22-AD32-584BE424FDB3";
 $datastore = "O-A0002-001"; // 自動雨量站資料-無人自動站雨量資料
 
