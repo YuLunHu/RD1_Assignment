@@ -4,6 +4,9 @@ session_start();
 // $datetime = date("Y-m-d H:i:s", mktime(date('H')+8, date('i'), date('s'), date('m'), date('d'), date('Y')));
 // echo $datetime; // 看時間
 
+// $guest_ip = $_SERVER['REMOTE_ADDR'];
+// echo "您的IP是：".$guest_ip."<br />"; // 查IP
+
 if (isset($_POST["OKbtn"])) // 按下按鈕後去要資料
 {
   if ($_POST["selectCity"] != "" && $_POST["selectData"] != "")
@@ -31,6 +34,15 @@ if (isset($_POST["OKbtn"])) // 按下按鈕後去要資料
 </head>
 
 <body>
+  <div style="display: flex;flex-wrap: wrap;border:1px #ccc solid;padding:5px;">
+    <img src="images/<?php if (!isset($_POST["selectCity"])) {
+      echo "臺中市";
+    } else {
+      echo $_POST["selectCity"];
+    } ?>.jpg" style="height:320px;flex-grow:1;">
+  </div>
+
+
   <form method="POST">
     <!-- 經緯度 -->
     <div style="text-align:center">
@@ -44,16 +56,10 @@ if (isset($_POST["OKbtn"])) // 按下按鈕後去要資料
       <select id="selectData" name="selectData" class="col-2 custom-select">
         <option value="">--</option>
       </select>
-      <button id="OKbtn" name="OKbtn" type="submit" class="btn btn-primary" value="OK">OK</button>
+      <button id="OKbtn" name="OKbtn" type="submit" class="btn btn-primary" value="OK">查詢</button>
     </div>
   </form>
 
-<div class="landscape" style="margin:15px">
-  <img id="cityImage" <?php if ($_POST["selectCity"] != "") {
-    echo "src=images/" . $_POST["selectCity"] . ".jpg";
-  } ?> width="200" style="display:block; margin:auto;">
-</div>
-  
   <div id="queryTable">
     <table class="table table-striped version_5 href-tr" id="sortTable">
       <thead>
@@ -185,16 +191,16 @@ if (isset($_POST["OKbtn"])) // 按下按鈕後去要資料
       obj = null;
     }
 
-    $("#selectCity").change(function() {
+    $("#selectCity").change(function () {
       var cityImagePath = "images/" + $("#selectCity").val() + ".jpg";
       $("#cityImage").attr("src", cityImagePath);
-      $("#cityImage").css('visibility','visible');
+      $("#cityImage").css('visibility', 'visible');
     });
   </script>
 
   <!-- 抓經緯度 -->
   <script>
-    getLocation();
+    // getLocation();
 
     function getLocation() {
       if (navigator.geolocation) {
